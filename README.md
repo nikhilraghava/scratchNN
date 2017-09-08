@@ -16,7 +16,7 @@ Before we define our model, let's take a look at our training data. For this mod
 Now let's look at a diagrammatic representation of our model.
 
 <div align="center">
-  <img src="https://cldup.com/zJzDxXKT-z.png"><br><br>
+<br><img src="https://cldup.com/zJzDxXKT-z.png"><br>
 </div>
 
 From our table, we know that we have 2 inputs: A and B that are being mapped to an output. So we define 2 input nodes and an output node with a hidden layer consisting of 4 hidden nodes in the middle. Now let's implement this model with the help of Numpy.
