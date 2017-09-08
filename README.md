@@ -12,7 +12,7 @@ Before we type our code, let's get our training data. For this model, we will on
 |0   |0   |1   |0       |
 |0   |1   |1   |1       |
 |1   |0   |1   |1       |
-|1   |1   |1   |1       |
+|1   |1   |1   |0       |
 
 The actual truth for the XNOR gate is longer but we will only be training using 4 examples. So now let's import `numpy as np` and get started.
 
