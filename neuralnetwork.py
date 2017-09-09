@@ -71,3 +71,4 @@ if __name__ == '__main__':
     nn.save_model()
     output = nn.run_saved_model(X)
     print(output)
+
