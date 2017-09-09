@@ -1,10 +1,10 @@
 import numpy as np
 
-# Training data
-X = np.array([[0, 0],
-              [0, 1],
-              [1, 0],
-              [1, 1]])
+# Training data, last column: bias
+X = np.array([[0, 0, 1],
+              [0, 1, 1],
+              [1, 0, 1],
+              [1, 1, 1]])
 
 y = np.array([[0],
               [1],
@@ -12,28 +12,34 @@ y = np.array([[0],
               [0]])
 
 # Weights
-w_1 = np.random.uniform(size=(2, 4))
+np.random.seed(1)
+w_1 = np.random.uniform(size=(3, 4))
 w_2 = np.random.uniform(size=(4, 1))
-# Bias
-bias = np.random.uniform(size=(4, 4))
-
+# Epochs
+epochs = 10000
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
+def sigmoid_prime(x):
+    return np.subtract(x, np.square(x))
 
-for epoch in range(10000):
+for epoch in range(epochs):
     # Layers
-    l1 = np.add(np.dot(X, w_1), bias)
-    l1 = sigmoid(l1)
-    l2 = np.dot(l1, w_2)
-    l2 = sigmoid(l2)
+    l1 = sigmoid(np.dot(X, w_1))
+    l2 = sigmoid(np.dot(l1, w_2))
 
-    # Loss
-    error = np.subtract(y, l2)
-    loss = np.sum(np.square(error))
-    deriv = -2 * np.sum(error)
+    # Error
+    l2_error = y - l2
+    l2_delta = l2_error * sigmoid_prime(l2)
+    l1_error = np.dot(l2_delta, w_2.T)
+    l1_delta = l1_error * sigmoid_prime(l1)
 
-    # TODO: Optimize
+    # Update weights
+    w_1 += np.dot(X.T, l1_delta)
+    w_2 += np.dot(l1, l2_delta)
 
-print(deriv)
+    # Output
+    output = np.round(l2)
+
+print(output)
