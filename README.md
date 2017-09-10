@@ -1,10 +1,18 @@
 # ScratchNN
 
-ScratchNN is a neural network implemented using Numpy, from scratch. We train the model to map inputs to outputs of the Exclusive-OR gate. Line by line explanation of the code can be found below.
+Artificial Neural Networks are statistical learning models inspired by biological neural networks (aka our brain). When we learn new concepts, we form an abstract understanding about them and apply it at a later time to solve/understand a different concept or problem. In this repository, we will be building a neural network that is able to understand the XOR gate's truth table and predict outputs based on a given set of inputs.
 
-## Implementation
+## Introduction to Neural Networks
 
-Before we define our model, let's take a look at our training data. For this model, we will only be having 4 rows of training data. The training data for our model is the 2 input XOR gate's truth table. 
+Before we create an "artificial brain" that is capable of understanding the XOR gate's truth table, we first need to understand how our own brains work. Our brain is made up of millions of neurons and are connected to each other via synapses. Similarly, our own artificial neural network is made up of nodes, which are similar to neurons, and inter-node connections, which are similar to synapses. A neural network has three layers to it: an input layer, a hidden layer, and an output layer. There can be `n` number of hidden layers in a neural network and if the number of hidden layers is two or more, the neural network is known as a deep neural network. Hidden layers are "hidden" because they are not visible as network output. When we train a neural network we are essentially making the neural network "understand" how much each individual input influences the output. For example, if we design a neural network to predict if it would rain on a given day using temperature, humidity and wind speed as its inputs, then the goal of training would be to make the neural network "understand" how much each of those factors contributes individually to cause rain. So humidity might be a more dominant factor as compared to temperature or wind speed in causing rain. 
+
+This is called "weighting" and when we train, our goal is to tune these weights to achieve the most accurate "understanding" of how each of those inputs influence the output. Sometimes, weighing those inputs might just not be enough for us to "understand" all our data. For example, if we know that wind speed makes a 20% contribution towards the likelihood of it raining on a given day, and if there were cases where there was no wind and it rained on a certain day, then our model, who just depended on weighing these inputs would not know that there is still a chance that it would rain on a non-windy day. To solve this we use what's known as a bias. A bias helps tune our model further and avoid potential discrepancies caused by just weighing our inputs. 
+
+Neural networks are only able to handle numerical data and when we weigh and add biases to numerical data, we get numbers that don't necessarily mean anything unless they are passed through an activation function. An activation function limits and maps numerical outputs to values between a certain range (in our case, 0 and 1). So a number closer to 0 indicates that it would not rain and a number closer to 1 would indicate that it would rain.
+
+## Data and Architecture
+
+2-input XOR gate's truth table.
 
 | A  | B  | Output |
 |:--:|:--:|:------:|
@@ -13,84 +21,8 @@ Before we define our model, let's take a look at our training data. For this mod
 |1   |0   |1       |
 |1   |1   |0       |
 
-Now let's look at a diagrammatic representation of our model.
+From our truth table, we know that we need two input nodes and an output node, and to keep things simpler we will only be having a single hidden layer with four hidden nodes. An extra node will be placed at the input layer to accomodate bias.
 
 <div align="center">
-    <br><img src="https://cldup.com/zJzDxXKT-z.png"><br>
+    <br><img src="https://cldup.com/i2VxUILC0S.png" width="500" height="291"><br>
 </div>
-
-From our table, we know that we have 2 inputs: A and B that are being mapped to an output. So we define 2 input nodes and an output node with a hidden layer consisting of 4 hidden nodes in the middle. The number of hidden nodes in the hidden layer can vary and it is up to us to decide. Now let's implement this model with the help of Numpy.
-
-```python
-import numpy as np
-
-
-class NeuralNetwork():
-    def __init__(self):
-        # Seed random number generator
-        np.random.seed(1)
-        # Training data
-        self.X = np.array([[0, 0, 1],
-                           [0, 1, 1],
-                           [1, 0, 1],
-                           [1, 1, 1]])
-
-        self.y = np.array([[0],
-                           [1],
-                           [1],
-                           [0]])
-
-        # Weights
-        self.w_1 = np.random.uniform(size=(3, 4))
-        self.w_2 = np.random.uniform(size=(4, 1))
-```
-
-Here, we define a class, `NeuralNetwork` and then initialize the training data and weights. Notice that our input data, `X`, has 3 columns instead of 2. The extra column is to accomodate the bias. The weight, `self.w_1` is a `3x4` matrix between the input layer and the output layer. It is a `3x4` matrix because we have 3 input nodes: 2 data input nodes,an extra node for the bias and 4 hidden layer nodes. The weight, `self.w_2` is a `4x1` matrix betweeen the hidden layer and the output layer. It is a `4x1` matrix because we have 4 hidden layer nodes and an output node. Both the weights are matricies with random values between 0 and 1. Next we define our sigmoid function.
-
-```python
-def sigmoid(self, x):
-        return 1 / (1 + np.exp(-x))
-```
-
-The function follows the logistic function's equation.
-
-<div align="center">
-    <br><img src="https://cldup.com/6x0KSbiNuV.png" width="311.5" height="151.5"><br>
-</div>
-
-The sigmoid function helps us to map any value to a value between 0 and 1.This is useful when we have a binary classification task. Now we need to define the derivative of the sigmoid function.
-
-```python
-def sigmoid_derivative(self, x):
-        return np.subtract(x, np.square(x))
-```
-
-The derivative of the sigmoid is useful when we are computing the loss during the backpropagation. The calculation to obtain the derivative of the sigmoid function:
-
-<div align="center">
-    <br><img src="https://cldup.com/KBcewAjNuR.png"><br>
-</div>
-
-Now let us define our model.
-
-```python
-def train_network(self, inpt, output, epochs):
-        # Training loop
-        for epoch in range(epochs):
-            # Layers
-            l1 = self.sigmoid(np.dot(inpt, self.w_1))
-            l2 = self.sigmoid(np.dot(l1, self.w_2))
-
-            # Error
-            l2_error = output - l2
-            l2_delta = l2_error * self.sigmoid_derivative(l2)
-            l1_error = np.dot(l2_delta, self.w_2.T)
-            l1_delta = l1_error * self.sigmoid_derivative(l1)
-
-            # Update weights
-            self.w_1 += np.dot(inpt.T, l1_delta)
-            self.w_2 += np.dot(l1, l2_delta)
-
-        # Return final output
-        return l2
-```
