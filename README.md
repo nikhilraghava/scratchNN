@@ -24,63 +24,26 @@ Our training data: a 2-input XOR gate's truth table.
 From our truth table, we know that we need two input nodes for our input layer and an output node for our output layer. To keep things simple, we will only be having a single hidden layer with four hidden nodes. An extra node will be placed at the input layer to accomodate bias for our neural network.
 
 <div align="center">
-    <br><img src="https://cldup.com/i2VxUILC0S.png" width="500" height="291"><br>
+    <br><img src="https://cldup.com/i2VxUILC0S.png" width="500" height="291"><br><br>
 </div>
 
 Our first layer, which is actually our hidden layer is represented using the following equation:
 
 <div align="center">
-    <br><img src="https://cldup.com/0tGOWR_4nT.png"><br>
+    <br><img src="https://cldup.com/0tGOWR_4nT.png" width="275.7" height="24.9"><br><br>
 </div>
 
 Where `sigmoid` is defined as:
 
 <div align="center">
-    <br><img src="https://cldup.com/3F7AHo-uqa.png"><br>
+    <br><img src="https://cldup.com/3F7AHo-uqa.png" width="206.1" height="52.5"><br><br>
 </div>
 
 Our second layer, which is our output layer is represented using the following equation:
 
 <div align="center">
-    <br><img src="https://cldup.com/Yh6ygfmoKW.png"><br>
+    <br><img src="https://cldup.com/Yh6ygfmoKW.png" width="321" height="24.9"><br><br>
 </div>
 
 Since we use a random set of initial weights, the output is almost always going to off the intended output, so we need a way to adjust our weights and this process is known as back propagation. In order to improve our model, we first need to quantify how wrong our predictions are and then adjust our weights in such a way that the difference between the output of our model and the intended output decreases over time.
 
-
-## Implementing the model
-
-First, let's import Numpy, define a class called `NeuralNetwork` and initialize our training data and the weights.
-
-```python
-import numpy as np
-
-
-class NeuralNetwork():
-    def __init__(self):
-        # Seed random number generator
-        np.random.seed(1)
-        # Training data
-        self.X = np.array([[0, 0, 1],
-                           [0, 1, 1],
-                           [1, 0, 1],
-                           [1, 1, 1]])
-
-        self.y = np.array([[0],
-                           [1],
-                           [1],
-                           [0]])
-
-        # Weights
-        self.w_1 = np.random.uniform(size=(3, 4))
-        self.w_2 = np.random.uniform(size=(4, 1))
-```
-
-We `seed` the random number generator to get the same set of random numbers everytime we run our program. This is useful for debugging. Then we define our training data, `X` and `y`. Notice that `X` has an extra column of `1`s, they are our biases. The weights, `w_1` and `w_2` are all matricies containing random values between 0 and 1. `w_1` is the weight between the input layer and the output layer and it's a `3x4` matrix because we have 3 nodes (2 input and 1 bias) in the input layer and 4 nodes in the hidden layer. `w_2` is the weight between the hidden layer and the output layer and it's a `4x1` matrix because we have 4 nodes in the hidden layer and 1 node in the output layer. Now we need to define our activation function.
-
-```python
-def sigmoid(self, x):
-        return 1 / (1 + np.exp(-x))
-```
-
-Our activation function is a sigmoid function with the following equation.
